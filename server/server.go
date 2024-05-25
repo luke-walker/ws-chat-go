@@ -9,8 +9,6 @@ import (
     "golang.org/x/net/websocket"
 )
 
-const ADDR = "127.0.0.1:5050"
-
 type Server struct {
     clients map[*websocket.Conn]bool
 }
