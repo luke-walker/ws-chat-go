@@ -1,28 +1,28 @@
 package main
 
 import (
-	"fmt"
+    "fmt"
     "io"
-	"net/http"
+    "net/http"
 
-	"golang.org/x/net/websocket"
+    "golang.org/x/net/websocket"
 )
 
 const ADDR = "127.0.0.1:5050"
 
 type Server struct {
-	clients map[*websocket.Conn]bool
+    clients map[*websocket.Conn]bool
 }
 
 func NewServer() *Server {
-	return &Server{
-		clients: make(map[*websocket.Conn]bool),
-	}
+    return &Server{
+        clients: make(map[*websocket.Conn]bool),
+    }
 }
 
 func (s *Server) ChatServer(ws *websocket.Conn) {
     // should have client send initial data containing username etc
-	s.clients[ws] = true
+    s.clients[ws] = true
 	
     buf := make([]byte, 1024)
     for {
@@ -51,13 +51,13 @@ func (s *Server) ChatServer(ws *websocket.Conn) {
 }
 
 func main() {
-	server := NewServer()
+    server := NewServer()
 
-	http.Handle("/", websocket.Handler(server.ChatServer))
-	
-	fmt.Println("Server is running on", ADDR)
-	err := http.ListenAndServe(ADDR, nil)
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
+    http.Handle("/", websocket.Handler(server.ChatServer))
+
+    fmt.Println("Server is running on", ADDR)
+    err := http.ListenAndServe(ADDR, nil)
+    if err != nil {
+    	fmt.Println("Error:", err)
+    }
 }
