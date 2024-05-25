@@ -2,6 +2,7 @@ package main
 
 import (
     "bufio"
+    "flag"
     "fmt"
     "io"
     "log"
@@ -12,7 +13,6 @@ import (
 )
 
 const ORIGIN = "http://127.0.0.1"
-const SERVER_URL = "ws://127.0.0.1:5050"
 
 type Client struct {
     ws *websocket.Conn
@@ -53,14 +53,17 @@ func (c *Client) writeLoop(scanner *bufio.Scanner) {
 }
 
 func main() {
+    urlFlag := flag.String("url", "ws://127.0.0.1:5050", "specify the server url")
+    flag.Parse()
+
     scanner := bufio.NewScanner(os.Stdin)
 
     fmt.Println("Connecting to server...")
-    ws, err := websocket.Dial(SERVER_URL, "", ORIGIN)
+    ws, err := websocket.Dial(*urlFlag, "", ORIGIN)
     if err != nil {
         log.Fatal("Fatal Error:", err)
     }
-    fmt.Println("Connected to", SERVER_URL)
+    fmt.Println("Connected to", *urlFlag)
 
     fmt.Print("Enter your name: ")
     scanner.Scan()
