@@ -1,6 +1,7 @@
 package main
 
 import (
+    "flag"
     "fmt"
     "io"
     "net/http"
@@ -36,7 +37,7 @@ func (s *Server) ChatServer(ws *websocket.Conn) {
             fmt.Println("Error:", err)
         }
 
-        // can optimize w/ threads
+        // can optimize with goroutines
         for client := range s.clients {
             if client == ws {
                 continue
@@ -51,12 +52,17 @@ func (s *Server) ChatServer(ws *websocket.Conn) {
 }
 
 func main() {
+    hostFlag := flag.String("host", "127.0.0.1", "specify the hostname")
+    portFlag := flag.Int("port", 5050, "specify the server port")
+    flag.Parse()
+
     server := NewServer()
 
     http.Handle("/", websocket.Handler(server.ChatServer))
 
-    fmt.Println("Server is running on", ADDR)
-    err := http.ListenAndServe(ADDR, nil)
+    addr := fmt.Sprintf("%s:%d", *hostFlag, *portFlag)
+    fmt.Println("Server is running on", addr)
+    err := http.ListenAndServe(addr, nil)
     if err != nil {
     	fmt.Println("Error:", err)
     }
